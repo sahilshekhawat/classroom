@@ -1,0 +1,29 @@
+private_assignment:
+  title: 'Private assignment'
+  slug: 'private-assignment'
+  organization: private_repos_plan_organization
+  creator: classroom_owner
+  public_repo: false
+
+private_assignment_with_starter_code:
+  title: 'Private assignment with starter code'
+  slug: 'private-assignment-with-starter-code'
+  organization: private_repos_plan_organization
+  creator: classroom_owner
+  starter_code_repo_id: 1062897 # https://github.com/github/gitignore
+  public_repo: false
+
+public_assignment:
+  title: 'Public assignment'
+  slug: 'public-assignment'
+  organization: free_repos_plan_organization
+  creator: classroom_owner
+  public_repo: true
+
+public_assignment_with_starter_code:
+  title: 'Public assignment with starter code'
+  slug: 'public-assignment-with-starter-code'
+  organization: free_repos_plan_organization
+  creator: classroom_owner
+  starter_code_repo_id: 1062897 # https://github.com/github/gitignore
+  public_repo: true

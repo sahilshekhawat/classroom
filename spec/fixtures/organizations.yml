@@ -1,0 +1,11 @@
+private_repos_plan_organization:
+  github_id: <%= ENV['CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_ID'] %>
+  title: <%= ENV['CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN'] %>
+  slug: <%= ENV['CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN'] %>
+  users: classroom_owner
+
+free_repos_plan_organization:
+  github_id: <%= ENV['CLASSROOM_TEST_FREE_PLAN_ORGANIZATION_GITHUB_ID'] %>
+  title: <%= ENV['CLASSROOM_TEST_FREE_PLAN_ORGANIZATION_GITHUB_LOGIN'] %>
+  slug: <%= ENV['CLASSROOM_TEST_FREE_PLAN_ORGANIZATION_GITHUB_LOGIN'] %>
+  users: classroom_owner

@@ -1,0 +1,7 @@
+private_repos_plan_organization_grouping:
+  title: 'Private repos organization grouping'
+  organization: private_repos_plan_organization
+
+free_repos_plan_organization_grouping:
+  title: 'Free repos organization grouping'
+  organization: free_repos_plan_organization

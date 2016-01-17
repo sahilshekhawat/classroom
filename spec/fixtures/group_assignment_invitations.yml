@@ -1,0 +1,15 @@
+private_group_assignment_invitation:
+  group_assignment: private_group_assignment
+  key: <%= SecureRandom.hex(16) %>
+
+private_group_assignment_invitation_with_starter_code:
+  group_assignment: private_group_assignment_with_starter_code
+  key: <%= SecureRandom.hex(16) %>
+
+public_group_assignment_invitation:
+  group_assignment: public_group_assignment
+  key: <%= SecureRandom.hex(16) %>
+
+public_group_assignment_invitation_with_starter_code:
+  group_assignment: public_group_assignment_with_starter_code
+  key: <%= SecureRandom.hex(16) %>

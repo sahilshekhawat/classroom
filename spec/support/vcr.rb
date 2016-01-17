@@ -12,35 +12,45 @@ VCR.configure do |c|
   }
 
   # Application id
-  c.filter_sensitive_data('<TEST_APPLICATION_GITHUB_CLIENT_ID>') do
+  c.filter_sensitive_data('<APPLICATION_TEST_GITHUB_CLIENT_ID>') do
     application_github_client_id
   end
 
   # Owner
-  c.filter_sensitive_data('<TEST_CLASSROOM_OWNER_GITHUB_ID>') do
-    classroom_owner_github_id
+  c.filter_sensitive_data('<CLASSROOM_TEST_OWNER_GITHUB_ID>') do
+    classroom_test_owner_github_id
   end
 
-  c.filter_sensitive_data('<TEST_CLASSROOM_OWNER_GITHUB_TOKEN>') do
-    classroom_owner_github_token
+  c.filter_sensitive_data('<CLASSROOM_TEST_OWNER_GITHUB_TOKEN>') do
+    classroom_test_owner_github_token
   end
 
-  # Owners Org
-  c.filter_sensitive_data('<TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID>') do
-    classroom_owner_organization_github_id
+  # Organizations
+  # Private Repos Plan
+  c.filter_sensitive_data('<CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_ID>') do
+    classroom_test_private_repos_plan_organization_github_id
   end
 
-  c.filter_sensitive_data('<TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN>') do
-    classroom_owner_organization_github_login
+  c.filter_sensitive_data('<CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN>') do
+    classroom_test_private_repos_plan_organization_github_login
   end
 
-  # Student
-  c.filter_sensitive_data('<TEST_CLASSROOM_STUDENT_GITHUB_ID>') do
-    classroom_student_github_id
+  # Free Repos Plan
+  c.filter_sensitive_data('<CLASSROOM_TEST_FREE_REPOS_PLAN_ORGANIZATION_GITHUB_ID>') do
+    classroom_test_free_repos_plan_organization_github_id
   end
 
-  c.filter_sensitive_data('<TEST_CLASSROOM_STUDENT_GITHUB_TOKEN>') do
-    classroom_student_github_token
+  c.filter_sensitive_data('<CLASSROOM_TEST_FREE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN>') do
+    classroom_test_free_repos_plan_organization_github_login
+  end
+
+  # Member
+  c.filter_sensitive_data('<CLASSROOM_TEST_MEMBER_GITHUB_ID>') do
+    classroom_member_github_id
+  end
+
+  c.filter_sensitive_data('<CLASSROOM_TEST_MEMBER_GITHUB_TOKEN>') do
+    classroom_member_github_token
   end
 
   c.hook_into :webmock
@@ -50,32 +60,40 @@ def application_github_client_id
   ENV.fetch 'GITHUB_CLIENT_ID', 'i' * 20
 end
 
-def classroom_owner_github_id
-  ENV.fetch 'TEST_CLASSROOM_OWNER_GITHUB_ID', 8_675_309
+def classroom_test_owner_github_id
+  ENV.fetch 'CLASSROOM_TEST_OWNER_GITHUB_ID', 8_675_309
 end
 
-def classroom_owner_github_token
-  ENV.fetch 'TEST_CLASSROOM_OWNER_GITHUB_TOKEN', 'x' * 40
+def classroom_test_owner_github_token
+  ENV.fetch 'CLASSROOM_TEST_OWNER_GITHUB_TOKEN', 'x' * 40
 end
 
-def classroom_owner_organization_github_id
-  ENV.fetch 'TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID', 1
+def classroom_test_private_repos_plan_organization_github_id
+  ENV.fetch 'CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_ID', 1
 end
 
-def classroom_owner_organization_github_login
-  ENV.fetch 'TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN', 'classroom-testing-org'
+def classroom_test_private_repos_plan_organization_github_login
+  ENV.fetch 'CLASSROOM_TEST_PRIVATE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN', 'classroom-testing-org'
 end
 
-def classroom_student_github_id
-  ENV.fetch 'TEST_CLASSROOM_STUDENT_GITHUB_ID', 42
+def classroom_test_free_repos_plan_organization_github_id
+  ENV.fetch 'CLASSROOM_TEST_FREE_REPOS_PLAN_ORGANIZATION_GITHUB_ID', 2
 end
 
-def classroom_student_github_token
-  ENV.fetch 'TEST_CLASSROOM_STUDENT_GITHUB_TOKEN', 'q' * 40
+def classroom_test_free_repos_plan_organization_github_login
+  ENV.fetch 'CLASSROOM_TEST_FREE_REPOS_PLAN_ORGANIZATION_GITHUB_LOGIN', 'the-justice-league'
+end
+
+def classroom_member_github_id
+  ENV.fetch 'CLASSROOM_TEST_MEMBER_GITHUB_ID', 42
+end
+
+def classroom_member_github_token
+  ENV.fetch 'CLASSROOM_TEST_MEMBER_GITHUB_TOKEN', 'q' * 40
 end
 
 def oauth_client
-  Octokit::Client.new(access_token: classroom_owner_github_token)
+  Octokit::Client.new(access_token: classroom_test_owner_github_token)
 end
 
 def use_vcr_placeholder_for(text, replacement)
