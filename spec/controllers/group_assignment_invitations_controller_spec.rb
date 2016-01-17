@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe GroupAssignmentInvitationsController, type: :controller do
+  fixtures :groupings, :group_assignments, :group_assignment_invitations, :organizations, :users
+
   describe 'GET #show' do
-    let(:invitation) { create(:group_assignment_invitation) }
+    let(:invitation) { group_assignment_invitations(:private_group_assignment_invitation_with_starter_code) }
 
     context 'unauthenticated request' do
       it 'redirects the new user to sign in with GitHub' do
@@ -13,19 +15,11 @@ RSpec.describe GroupAssignmentInvitationsController, type: :controller do
   end
 
   describe 'PATCH #accept_invitation', :vcr do
-    let(:organization)  { GitHubFactory.create_owner_classroom_org }
-    let(:user)          { GitHubFactory.create_classroom_student   }
-    let(:grouping)      { Grouping.create(title: 'Grouping 1', organization: organization) }
+    let(:group_assignment) { group_assignments(:private_group_assignment_with_starter_code) }
+    let(:invitation)       { group_assignment.group_assignment_invitation                   }
+    let(:organization)     { group_assignment.organization                                  }
 
-    let(:group_assignment) do
-      GroupAssignment.create(creator: organization.users.first,
-                             title: 'HTML5',
-                             grouping: grouping,
-                             organization: organization,
-                             public_repo: false)
-    end
-
-    let(:invitation) { GroupAssignmentInvitation.create(group_assignment: group_assignment) }
+    let(:user) { users(:classroom_member) }
 
     context 'authenticated request' do
       before(:each) do

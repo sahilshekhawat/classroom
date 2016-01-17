@@ -1,17 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe AssignmentRepo, type: :model do
-  context 'with created objects', :vcr do
-    let(:organization) { GitHubFactory.create_owner_classroom_org  }
-    let(:student)      { GitHubFactory.create_classroom_student    }
+  fixtures :assignments, :organizations, :users
 
-    let(:assignment) do
-      Assignment.create(creator: organization.users.first,
-                        title: 'Learn Ruby',
-                        organization: organization,
-                        public_repo: false,
-                        starter_code_repo_id: 1_062_897)
-    end
+  context 'with created objects', :vcr do
+    let(:student)       { users(:classroom_member)                           }
+    let(:assignment)    { assignments(:private_assignment_with_starter_code) }
+    let(:organization)  { assignment.organization                            }
 
     before(:each) do
       @assignment_repo = AssignmentRepo.create(assignment: assignment, user: student)

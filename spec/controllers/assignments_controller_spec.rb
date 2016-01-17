@@ -3,10 +3,16 @@ require 'rails_helper'
 RSpec.describe AssignmentsController, type: :controller do
   include ActiveJob::TestHelper
 
-  let(:organization) { GitHubFactory.create_owner_classroom_org }
-  let(:user)         { organization.users.first                 }
+  fixtures :assignments, :organizations, :users
 
-  let(:assignment) { Assignment.create(title: 'Assignment', creator: user, organization: organization) }
+  let(:assignment)   { assignments(:private_assignment_with_starter_code) }
+
+  let(:organization) { assignment.organization  }
+  let(:user)         { organization.users.first }
+
+  let(:new_assignment_params) do
+    { creator: user, organization: organization, title: 'test', public_repo: false }
+  end
 
   before do
     sign_in(user)
@@ -27,35 +33,35 @@ RSpec.describe AssignmentsController, type: :controller do
   describe 'POST #create', :vcr do
     it 'creates a new Assignment' do
       expect do
-        post :create, organization_id: organization.slug, assignment: attributes_for(:assignment)
+        post :create, organization_id: organization.slug, assignment: new_assignment_params
       end.to change { Assignment.count }
     end
 
     context 'valid starter_code input' do
-      before do
-        post :create,
-             organization_id: organization.slug,
-             assignment:      attributes_for(:assignment),
-             repo_name:       'rails/rails'
-      end
-
       it 'creates a new Assignment' do
-        expect(Assignment.count).to eql(1)
+        expect do
+          post :create,
+               organization_id: organization.slug,
+               assignment:      new_assignment_params,
+               repo_name:       'rails/rails'
+        end.to change { Assignment.count }
       end
     end
 
     context 'invalid starter_code input' do
       before do
-        request.env['HTTP_REFERER'] = 'http://test.host/classrooms/new'
+        request.env['HTTP_REFERER'] = "http://test.host/classrooms/#{organization.slug}/assignments/new"
+
+        @before_assignment_count = Assignment.count
 
         post :create,
              organization_id: organization.slug,
-             assignment:      attributes_for(:assignment),
+             assignment:      new_assignment_params,
              repo_name:       'https://github.com/rails/rails'
       end
 
       it 'fails to create a new Assignment' do
-        expect(Assignment.count).to eql(0)
+        expect(Assignment.count).to eql(@before_assignment_count)
       end
 
       it 'does not return an internal server error' do
@@ -73,6 +79,11 @@ RSpec.describe AssignmentsController, type: :controller do
       get :show, organization_id: organization.slug, id: assignment.slug
       expect(response).to have_http_status(:success)
     end
+
+    context 'assignments from different orgs share the same slug' do
+      it 'returns a 404 if they try to cross paths' do
+      end
+    end
   end
 
   describe 'GET #edit', :vcr do
@@ -82,6 +93,9 @@ RSpec.describe AssignmentsController, type: :controller do
       expect(response).to have_http_status(:success)
       expect(assigns(:assignment)).to_not be_nil
     end
+
+    it 'returns a 404 for an assignment with the same slug but not in the same org' do
+    end
   end
 
   describe 'PATCH #update', :vcr do
@@ -90,6 +104,9 @@ RSpec.describe AssignmentsController, type: :controller do
       patch :update, id: assignment.slug, organization_id: organization.slug, assignment: options
 
       expect(response).to redirect_to(organization_assignment_path(organization, Assignment.find(assignment.id)))
+    end
+
+    it 'returns a 404 for an assignment with the same slug but not in the same org' do
     end
   end
 
@@ -111,6 +128,9 @@ RSpec.describe AssignmentsController, type: :controller do
     it 'redirects back to the organization' do
       delete :destroy, id: assignment.slug, organization_id: organization.slug
       expect(response).to redirect_to(organization)
+    end
+
+    it 'returns a 404 for an assignment with the same slug but not in the same org' do
     end
   end
 end

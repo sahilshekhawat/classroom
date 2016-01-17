@@ -1,22 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe GroupAssignmentRepo, type: :model do
+  fixtures :groupings, :group_assignments, :organizations, :users
+
   context 'with created objects', :vcr do
-    let(:organization) { GitHubFactory.create_owner_classroom_org }
-    let(:student)      { GitHubFactory.create_classroom_student   }
-    let(:repo_access)  { RepoAccess.create(user: student, organization: organization) }
+    let(:group_assignment) { group_assignments(:private_group_assignment_with_starter_code) }
+    let(:organization)     { group_assignment.organization                                  }
+    let(:grouping)         { group_assignment.grouping                                      }
 
-    let(:grouping)     { Grouping.create(organization: organization, title: 'Grouping 1') }
-    let(:group)        { Group.create(title: 'Group 1', grouping: grouping) }
+    let(:student) { users(:classroom_member) }
 
-    let(:group_assignment) do
-      GroupAssignment.create(creator: organization.users.first,
-                             grouping: grouping,
-                             title: 'Learn JavaScript',
-                             organization: organization,
-                             public_repo: false,
-                             starter_code_repo_id: 1_062_897)
-    end
+    let(:repo_access) { RepoAccess.create(user: student, organization: organization) }
+    let(:group)       { Group.create(title: 'Group 1', grouping: grouping)           }
 
     before(:each) do
       group.repo_accesses << repo_access

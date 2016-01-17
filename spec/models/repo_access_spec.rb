@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe RepoAccess, type: :model do
+  fixtures :organizations, :users
+
   describe 'callbacks', :vcr do
-    let(:organization) { GitHubFactory.create_owner_classroom_org }
-    let(:student)      { GitHubFactory.create_classroom_student   }
+    let(:organization) { organizations(:private_repos_plan_organization) }
+    let(:student)      { users(:classroom_member)                        }
 
     before(:each) do
       @repo_access = RepoAccess.create(user: student, organization: organization)

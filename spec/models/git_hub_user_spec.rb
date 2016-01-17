@@ -1,13 +1,15 @@
 require 'rails_helper'
 
 describe GitHubUser do
+  fixtures :users
+
   before do
     Octokit.reset!
     @client = oauth_client
   end
 
   let(:github_user)       { GitHubUser.new(@client, @client.user.id) }
-  let(:other_user)        { GitHubFactory.create_classroom_student   }
+  let(:other_user)        { users(:classroom_member)                 }
   let(:other_github_user) { GitHubUser.new(@client, other_user.uid)  }
 
   describe '#login', :vcr do

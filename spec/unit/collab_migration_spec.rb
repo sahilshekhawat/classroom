@@ -2,25 +2,20 @@ require 'rails_helper'
 require_relative '../../lib/collab_migration'
 
 RSpec.describe CollabMigration do
-  let(:organization) { GitHubFactory.create_owner_classroom_org }
-  let(:student)      { GitHubFactory.create_classroom_student   }
+  fixtures :assignments, :organizations, :users
+
+  let(:assignment)   { assignments(:private_assignment) }
+  let(:organization) { assignment.organization          }
+  let(:student)      { users(:classroom_member)         }
+
   let(:repo_access)  { RepoAccess.create(user: student, organization: organization) }
 
   let(:github_organization) { GitHubOrganization.new(organization.github_client, organization.github_id) }
-
-  let(:assignment) do
-    creator = organization.users.first
-    Assignment.create(organization: organization,
-                      title: 'gitignore',
-                      creator: creator,
-                      public_repo: false)
-  end
 
   describe 'repo_access with an assignment_repo', :vcr do
     before(:each) do
       @assignment_repo = AssignmentRepo.create(assignment: assignment, user: student)
       @assignment_repo.update_attributes(user: nil, repo_access: repo_access)
-      @assignment_repo.save
     end
 
     after(:each) do

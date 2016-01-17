@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  fixtures :users
+
   let(:github_omniauth_hash) { OmniAuth.config.mock_auth[:github] }
-  let(:user)                 { create(:user) }
+  let(:user)                 { users(:classroom_owner) }
 
   describe '#assign_from_auth_hash' do
     it 'updates the users attributes' do
@@ -13,10 +15,8 @@ RSpec.describe User, type: :model do
 
   describe '#find_by_auth_hash' do
     it 'finds the correct user' do
-      User.create_from_auth_hash(github_omniauth_hash)
       located_user = User.find_by_auth_hash(github_omniauth_hash)
-
-      expect(located_user).to eq(User.last)
+      expect(located_user).to eq(User.find_by(uid: user.uid))
     end
   end
 

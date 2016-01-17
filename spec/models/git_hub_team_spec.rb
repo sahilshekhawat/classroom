@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 describe GitHubTeam do
+  fixtures :organizations, :users
+
+  let(:organization) { organizations(:private_repos_plan_organization) }
+
   before do
     Octokit.reset!
     @client                    = oauth_client
-    @github_organization_login = classroom_owner_organization_github_login
-
-    @github_organization       = GitHubOrganization.new(@client, @github_organization_login)
+    @github_organization       = GitHubOrganization.new(@client, organization.github_id)
+    @github_organization_login = @github_organization.login
   end
 
   before(:each) do

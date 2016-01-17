@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe AssignmentInvitationsController, type: :controller do
+  fixtures :assignments, :assignment_invitations, :organizations, :users
+
   describe 'GET #show', :vcr do
-    let(:invitation) { create(:assignment_invitation) }
+    let(:invitation) { assignment_invitations(:private_assignment_invitation) }
 
     context 'unauthenticated request' do
       it 'redirects the new user to sign in with GitHub' do
@@ -12,7 +14,7 @@ RSpec.describe AssignmentInvitationsController, type: :controller do
     end
 
     context 'authenticated request' do
-      let(:user) { GitHubFactory.create_classroom_student }
+      let(:user) { users(:classroom_member) }
 
       before(:each) do
         sign_in(user)
@@ -26,22 +28,14 @@ RSpec.describe AssignmentInvitationsController, type: :controller do
   end
 
   describe 'PATCH #accept_invitation', :vcr do
-    let(:organization) { GitHubFactory.create_owner_classroom_org }
-    let(:user)         { GitHubFactory.create_classroom_student   }
+    let(:assignment) { assignments(:private_assignment_with_starter_code) }
+    let(:invitation) { assignment.assignment_invitation                   }
 
-    let(:assignment) do
-      Assignment.create(creator: organization.users.first,
-                        title: 'ruby-project',
-                        starter_code_repo_id: '1062897',
-                        organization: organization,
-                        public_repo: false)
-    end
-
-    let(:invitation) { AssignmentInvitation.create(assignment: assignment) }
+    let(:user)       { users(:classroom_member) }
 
     before(:each) do
-      request.env['HTTP_REFERER'] = "http://classroomtest.com/group-assignment-invitations/#{invitation.key}"
       sign_in(user)
+      request.env['HTTP_REFERER'] = "http://classroomtest.com/assignment-invitations/#{invitation.key}"
     end
 
     after(:each) do
@@ -62,7 +56,6 @@ RSpec.describe AssignmentInvitationsController, type: :controller do
 
       it 'does not create a an assignment repo record' do
         patch :accept_invitation, id: invitation.key
-
         expect(assignment.assignment_repos.count).to eq(0)
       end
     end

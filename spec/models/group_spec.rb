@@ -1,12 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Group, type: :model do
-  let(:organization) { GitHubFactory.create_owner_classroom_org }
-  let(:grouping)     { Grouping.create(title: 'Grouping 1', organization: organization) }
+  fixtures :groupings, :organizations, :users
 
   describe 'callbacks', :vcr do
-    let(:organization) { GitHubFactory.create_owner_classroom_org }
-    let(:grouping)     { Grouping.create(title: 'Grouping 1', organization: organization) }
+    let(:grouping)     { groupings(:private_repos_plan_organization_grouping) }
+    let(:organization) { grouping.organization                                }
 
     before(:each) do
       @group = Group.create(grouping: grouping, title: 'Toon Town')
@@ -25,10 +24,10 @@ RSpec.describe Group, type: :model do
     end
 
     describe 'assocation callbacks' do
-      let(:user) { GitHubFactory.create_classroom_student }
+      let(:member) { users(:classroom_member) }
 
       before(:each) do
-        @repo_access = RepoAccess.create(user: user, organization: organization)
+        @repo_access = RepoAccess.create(user: member, organization: organization)
         @group.repo_accesses << @repo_access
       end
 

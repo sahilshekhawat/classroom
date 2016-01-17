@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe DestroyResourceJob, type: :job do
-  let(:organization) { create(:organization) }
+  fixtures :organizations, :users
+
+  let(:organization) { organizations(:private_repos_plan_organization) }
 
   it 'destroys the resource' do
     assert_performed_with(job: DestroyResourceJob, args: [organization], queue: 'trash_can') do

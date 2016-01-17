@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'OAuth scope requirements', type: :request do
-  let(:organization) { GitHubFactory.create_owner_classroom_org }
-  let(:user)         { organization.users.first                 }
+  fixtures :organizations, :users
+
+  let(:organization) { organizations(:private_repos_plan_organization) }
+  let(:user)         { organization.users.first                        }
 
   describe 'organizations#show', :vcr do
     context 'unauthenticated request' do
@@ -20,9 +22,9 @@ RSpec.describe 'OAuth scope requirements', type: :request do
     context 'authenticated request' do
       before(:each) do
         get url_for(organization)
-        get response.redirect_url # http://www.example.com/login
-        get response.redirect_url # http://www.example.com/auth/github?scope=user%3Aemail%2Crepo%2Cdelete_repo%2Cadmin%3Aorg
-        get response.redirect_url # http://www.example.com/auth/github/callback
+        get response.redirect_url # https://classroom.github.com/login
+        get response.redirect_url # https://classroom.github.com/auth/github?scope=user%3Aemail%2Crepo%2Cdelete_repo%2Cadmin%3Aorg
+        get response.redirect_url # https://classroom.github.com/auth/github/callback
       end
 
       it 'renders organizations#show' do
@@ -47,12 +49,12 @@ RSpec.describe 'OAuth scope requirements', type: :request do
   describe 'OAuth dance', :vcr do
     before(:each) do
       get url_for(organization)
-      get response.redirect_url # http://www.example.com/login
-      get response.redirect_url # http://www.example.com/auth/github?scope=user%3Aemail%2Crepo%2Cdelete_repo%2Cadmin%3Aorg
+      get response.redirect_url # https://classroom.github.com/login
+      get response.redirect_url # https://classroom.github.com/auth/github?scope=user%3Aemail%2Crepo%2Cdelete_repo%2Cadmin%3Aorg
     end
 
     it 'redirects back to organizations#show' do
-      get response.redirect_url # http://www.example.com/auth/github/callback
+      get response.redirect_url # https://classroom.github.com/auth/github/callback
       expect(response).to redirect_to(url_for(organization))
     end
   end

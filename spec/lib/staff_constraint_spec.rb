@@ -13,8 +13,9 @@ describe StaffConstraint do
     end
 
     context 'when with user session' do
-      let(:id) { double('id') }
+      let(:id)      { double('id')                                }
       let(:request) { double('request', session: { user_id: id }) }
+
       before do
         allow(User).to receive(:find).with(id).and_return(user)
       end
