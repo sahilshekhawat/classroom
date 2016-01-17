@@ -11,12 +11,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#create_from_auth_hash' do
-    it 'creates a valid user' do
-      expect { User.create_from_auth_hash(github_omniauth_hash) }.to change { User.count }
-    end
-  end
-
   describe '#find_by_auth_hash' do
     it 'finds the correct user' do
       User.create_from_auth_hash(github_omniauth_hash)
