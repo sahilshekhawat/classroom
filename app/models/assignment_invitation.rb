@@ -20,7 +20,10 @@ class AssignmentInvitation < ActiveRecord::Base
       return assignment_repo if assignment_repo.present?
     end
 
-    AssignmentRepo.find_or_create_by!(assignment: assignment, user: invitee)
+    assignment_repo = AssignmentRepo.find_by(assignment: assignment, user: invitee)
+    return assignment_repo if assignment_repo.present?
+
+    create_assignment_repo!(assignment, invitee)
   end
 
   def title
@@ -35,5 +38,14 @@ class AssignmentInvitation < ActiveRecord::Base
 
   def assign_key
     self.key ||= SecureRandom.hex(16)
+  end
+
+  private
+
+  def create_assignment_repo!(assignment, invitee)
+    AssignmentRepo.create!(assignment: assignment, user: invitee)
+  rescue => err
+    Rails.logger.error(err.message)
+    raise
   end
 end
