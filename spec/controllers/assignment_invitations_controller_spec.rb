@@ -62,7 +62,6 @@ RSpec.describe AssignmentInvitationsController, type: :controller do
 
       it 'does not create a an assignment repo record' do
         patch :accept_invitation, id: invitation.key
-
         expect(assignment.assignment_repos.count).to eq(0)
       end
     end
