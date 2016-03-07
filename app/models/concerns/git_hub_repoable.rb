@@ -14,7 +14,9 @@ module GitHubRepoable
     github_user = GitHubUser.new(user.github_client, user.uid)
     repository  = GitHubRepository.new(organization.github_client, github_repo_id)
 
-    delete_github_repository_on_failure { repository.add_collaborator(github_user.login) }
+    delete_github_repository_on_failure do
+      repository.add_collaborator(github_user.login)
+    end
   end
 
   # Public
@@ -37,7 +39,8 @@ module GitHubRepoable
   #
   def delete_github_repository_on_failure
     yield
-  rescue GitHub::Error
+  rescue => err
+    Rails.logger(err.message)
     silently_destroy_github_repository
     raise GitHub::Error, 'Assignment failed to be created'
   end
@@ -45,7 +48,16 @@ module GitHubRepoable
   # Public
   #
   def silently_destroy_github_repository
-    destroy_github_repository
+    begin
+      destroy_github_repository
+    rescue => err
+      Rails.logger.error(err.message)
+      Rails.logger.error("Failed to delete GitHub Repository #{github_repo_id}")
+    end
+
+    # It shouldn't be set if the repo is deleted
+    self.github_repo_id = nil if self.new_record?
+
     true # Destroy ActiveRecord object even if we fail to delete the repository
   end
 
