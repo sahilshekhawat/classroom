@@ -40,7 +40,7 @@ module GitHubRepoable
   def delete_github_repository_on_failure
     yield
   rescue => err
-    Rails.logger(err.message)
+    Rails.logger.error(err.message)
     silently_destroy_github_repository
     raise GitHub::Error, 'Assignment failed to be created'
   end
