@@ -74,16 +74,6 @@ class OrganizationsController < ApplicationController
 
   private
 
-  def authorize_organization_access
-    return if @organization.users.include?(current_user) || current_user.staff?
-
-    begin
-      github_organization.admin?(decorated_current_user.login) ? @organization.users << current_user : not_found
-    rescue
-      not_found
-    end
-  end
-
   def authorize_organization_addition
     new_github_organization = github_organization_from_params
 
@@ -108,7 +98,10 @@ class OrganizationsController < ApplicationController
   end
 
   def set_organization
+    @organization = Organization.find_by!(id: params[:id])
+  rescue ActiveRecord::RecordNotFound
     @organization = Organization.find_by!(slug: params[:id])
+    redirect_to action: action, id: @organization.id, status: 301
   end
 
   # rubocop:disable AbcSize

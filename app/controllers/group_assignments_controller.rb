@@ -70,7 +70,7 @@ class GroupAssignmentsController < ApplicationController
   def new_group_assignment_params
     params
       .require(:group_assignment)
-      .permit(:title, :public_repo, :grouping_id)
+      .permit(:title, :public_repo, :grouping_id, :max_members)
       .merge(creator: current_user,
              organization: @organization,
              starter_code_repo_id: starter_code_repo_id_param)
@@ -88,7 +88,10 @@ class GroupAssignmentsController < ApplicationController
   end
 
   def set_group_assignment
+    @group_assignment = @organization.group_assignments.find_by!(id: params[:id])
+  rescue ActiveRecord::RecordNotFound
     @group_assignment = @organization.group_assignments.find_by!(slug: params[:id])
+    redirect_to action: action, id: @group_assignment.id, organization_id: @organization.id, status: 301
   end
 
   def starter_code_repo_id_param
@@ -102,7 +105,7 @@ class GroupAssignmentsController < ApplicationController
   def update_group_assignment_params
     params
       .require(:group_assignment)
-      .permit(:title, :public_repo)
+      .permit(:title, :public_repo, :max_members)
       .merge(starter_code_repo_id: starter_code_repo_id_param)
   end
 end
